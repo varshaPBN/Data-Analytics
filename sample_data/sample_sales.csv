@@ -1,0 +1,22 @@
+date,product,category,region,sales,quantity,price
+2024-01-15,Product A,Electronics,North,1500.00,10,150.00
+2024-01-16,Product B,Clothing,South,800.00,5,160.00
+2024-01-17,Product A,Electronics,East,1200.00,8,150.00
+2024-01-18,Product C,Furniture,West,2500.00,2,1250.00
+2024-01-19,Product B,Clothing,North,960.00,6,160.00
+2024-01-20,Product D,Electronics,South,1800.00,12,150.00
+2024-01-21,Product A,Electronics,West,1500.00,10,150.00
+2024-01-22,Product E,Clothing,East,640.00,4,160.00
+2024-01-23,Product C,Furniture,North,2500.00,2,1250.00
+2024-01-24,Product D,Electronics,South,1500.00,10,150.00
+2024-02-15,Product A,Electronics,North,1800.00,12,150.00
+2024-02-16,Product B,Clothing,South,1120.00,7,160.00
+2024-02-17,Product F,Furniture,East,3750.00,3,1250.00
+2024-02-18,Product C,Furniture,West,2500.00,2,1250.00
+2024-02-19,Product A,Electronics,North,1500.00,10,150.00
+2024-02-20,Product D,Electronics,South,2100.00,14,150.00
+2024-02-21,Product B,Clothing,West,800.00,5,160.00
+2024-02-22,Product E,Clothing,East,800.00,5,160.00
+2024-02-23,Product F,Furniture,North,3750.00,3,1250.00
+2024-02-24,Product A,Electronics,South,1200.00,8,150.00
+

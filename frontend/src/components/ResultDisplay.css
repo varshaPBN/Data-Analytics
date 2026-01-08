@@ -1,0 +1,114 @@
+.result-table,
+.result-value,
+.result-plot,
+.result-text,
+.result-error {
+  width: 100%;
+}
+
+.table-container {
+  overflow-x: auto;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.data-table th {
+  background: #667eea;
+  color: white;
+  padding: 0.75rem;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.data-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.data-table tr:hover {
+  background: #f5f5f5;
+}
+
+.table-info {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #666;
+  text-align: right;
+}
+
+.result-value {
+  padding: 1rem;
+}
+
+.value-display {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #667eea;
+  margin-bottom: 0.5rem;
+}
+
+.value-notes {
+  font-size: 0.9rem;
+  color: #666;
+  font-style: italic;
+}
+
+.result-plot {
+  text-align: center;
+}
+
+.plot-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.plot-notes {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.result-text {
+  padding: 1rem;
+}
+
+.result-text p {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.text-notes {
+  font-size: 0.85rem;
+  color: #999;
+  font-style: italic;
+}
+
+.result-error {
+  padding: 1rem;
+  background: #fee;
+  border-left: 4px solid #f00;
+  border-radius: 4px;
+}
+
+.result-error p {
+  color: #c00;
+  margin-bottom: 0.5rem;
+}
+
+.error-notes {
+  font-size: 0.85rem;
+  color: #999;
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+
