@@ -28,10 +28,14 @@ class DataAnalyticsAgent:
             api_key=api_key
         )
         
-        # Initialize Opik for LLM tracing
+        # Initialize Opik for LLM tracing (non-blocking)
         # OPIK_API_KEY should be set in environment variables
         # Get your API key from: https://comet.com/opik/your-workspace-name/get-started
-        opik.init()
+        try:
+            opik.init()
+        except Exception as e:
+            # Opik initialization failed, but continue without it
+            print(f"Warning: Opik initialization failed: {e}. Continuing without tracing.")
     
     @track
     async def generate_code(

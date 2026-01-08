@@ -34,13 +34,22 @@ app.add_middleware(
 # Initialize database
 init_db()
 
-# Global agent instance
-agent = DataAnalyticsAgent()
-executor = CodeExecutor()
+# Global agent and executor instances (lazy initialization)
+agent = None
+executor = None
 
-# Mount static files for serving plots
-if os.path.exists(executor.temp_dir):
-    app.mount("/plots", StaticFiles(directory=executor.temp_dir), name="plots")
+@app.on_event("startup")
+async def startup_event():
+    """Initialize agent and executor on startup"""
+    global agent, executor
+    print("Initializing Data Analytics Agent...")
+    agent = DataAnalyticsAgent()
+    print("Initializing Code Executor...")
+    executor = CodeExecutor()
+    # Mount static files for serving plots (after executor is created)
+    if os.path.exists(executor.temp_dir):
+        app.mount("/plots", StaticFiles(directory=executor.temp_dir), name="plots")
+    print("✅ Backend ready!")
 
 
 @app.get("/")
@@ -92,6 +101,13 @@ async def process_query(request: QueryRequest):
     Process a natural language query about the dataset
     """
     try:
+        # Check if agent and executor are initialized
+        if agent is None or executor is None:
+            raise HTTPException(
+                status_code=503, 
+                detail="Service is still initializing. Please try again in a moment."
+            )
+        
         # Get dataset from database
         dataset = await get_dataset(request.dataset_id)
         if not dataset:
