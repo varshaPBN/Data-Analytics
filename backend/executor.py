@@ -13,6 +13,7 @@ import os
 import tempfile
 from typing import Dict, Any, List, Optional
 import traceback
+from .sensitive_data import SensitiveDataDetector
 
 # Allowed imports
 ALLOWED_IMPORTS = {
@@ -126,9 +127,13 @@ class CodeExecutor:
         except Exception as e:
             raise ValueError(f"Failed to load dataframe: {str(e)}")
         
-        # Prepare execution environment
+        # Detect and mask sensitive columns before execution
+        sensitive_columns = SensitiveDataDetector.get_all_sensitive_columns(list(df.columns))
+        df_masked = SensitiveDataDetector.mask_dataframe(df, sensitive_columns)
+        
+        # Prepare execution environment (use masked dataframe)
         exec_globals = {
-            'df': df,
+            'df': df_masked,
             'pd': pd,
             'np': np,
             'plt': plt,
@@ -203,17 +208,21 @@ class CodeExecutor:
         if result is None:
             # Try to infer result from last expression
             # This is a simplified approach - in production, you'd parse the AST
-            result = df
+            result = df_masked
         
-        # Format result
-        return self._format_result(result, plot_path)
+        # Format result (will mask any remaining sensitive columns)
+        return self._format_result(result, plot_path, sensitive_columns)
     
     def _format_result(
         self, 
         result: Any, 
-        plot_path: Optional[str] = None
+        plot_path: Optional[str] = None,
+        sensitive_columns: Optional[set] = None
     ) -> Dict[str, Any]:
         """Format execution result into standard response"""
+        
+        if sensitive_columns is None:
+            sensitive_columns = set()
         
         if plot_path:
             return {
@@ -233,6 +242,9 @@ class CodeExecutor:
                     "metadata": {"notes": "Query returned empty dataframe"}
                 }
             
+            # Mask any sensitive columns that might have been added back
+            result = SensitiveDataDetector.mask_dataframe(result, sensitive_columns)
+            
             # Limit result size
             if len(result) > 1000:
                 result = result.head(1000)
@@ -248,6 +260,14 @@ class CodeExecutor:
             }
         
         elif isinstance(result, pd.Series):
+            # Check if series name is sensitive
+            if result.name and result.name in sensitive_columns:
+                return {
+                    "type": "error",
+                    "data": "Access denied: This column contains sensitive data",
+                    "metadata": {"notes": "Sensitive data cannot be accessed"}
+                }
+            
             return {
                 "type": "table",
                 "data": result.to_dict(),
@@ -281,10 +301,15 @@ class CodeExecutor:
                     }
                 }
             else:
-                # Regular list - format as table
+                # Regular list - mask sensitive columns if list of dicts
+                if len(result) > 0 and isinstance(result[0], dict):
+                    masked_data = SensitiveDataDetector.mask_dict_data(result, sensitive_columns)
+                else:
+                    masked_data = result
+                
                 return {
                     "type": "table",
-                    "data": result,
+                    "data": masked_data,
                     "metadata": {
                         "row_count": len(result),
                         "notes": "List result"
@@ -292,9 +317,11 @@ class CodeExecutor:
                 }
         
         elif isinstance(result, dict):
+            # Mask sensitive columns in dict
+            masked_data = {k: ('***MASKED***' if k in sensitive_columns else v) for k, v in result.items()}
             return {
                 "type": "table",
-                "data": result,
+                "data": masked_data,
                 "metadata": {
                     "row_count": 1,
                     "notes": "Dictionary result"

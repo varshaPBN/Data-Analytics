@@ -8,6 +8,7 @@ import json
 from typing import Dict, Any, Optional, List
 import io
 import os
+from .sensitive_data import SensitiveDataDetector
 
 # Ensure data directory exists
 DATA_DIR = "data"
@@ -63,11 +64,17 @@ async def save_dataset(filename: str, file_content: bytes, file_type: str) -> in
         "shape": df.shape
     }
     
-    # Get sample data (first 5 rows)
-    sample_data = df.head(5).to_dict(orient='records')
+    # Detect sensitive columns
+    sensitive_columns = SensitiveDataDetector.get_all_sensitive_columns(list(df.columns))
     
-    # Convert dataframe to JSON for storage
-    data_json = df.to_json(orient='records')
+    # Mask sensitive columns in stored data
+    df_masked = SensitiveDataDetector.mask_dataframe(df, sensitive_columns)
+    
+    # Get sample data (first 5 rows) - already masked
+    sample_data = df_masked.head(5).to_dict(orient='records')
+    
+    # Convert masked dataframe to JSON for storage
+    data_json = df_masked.to_json(orient='records')
     
     # Save to database
     conn = get_connection()
