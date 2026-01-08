@@ -54,12 +54,7 @@ function App() {
             <div className="welcome-message">
               <h2>Welcome!</h2>
               <p>Upload a CSV or Excel file to get started.</p>
-              <p>Then ask questions like:</p>
-              <ul>
-                <li>"What were our top 5 products last month?"</li>
-                <li>"Show monthly revenue trends"</li>
-                <li>"Which region performed the worst?"</li>
-              </ul>
+              
             </div>
           )}
         </div>
